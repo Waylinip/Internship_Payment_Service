@@ -58,6 +58,14 @@ jobs:
 
       - name: Run tests
         run: mvn -B test
+        env:
+          DB_USERNAME: test
+          DB_PASSWORD: test
+          DB_HOST: localhost
+          DB_PORT: "27017"
+          DB_NAME: test
+          KAFKA_URL: localhost:9092
+          JWT_SECRET: dGVzdHNlY3JldGtleWZvcnRlc3Rpbmdwd3Jwb3Nlc29ubHkxMjM0NTY=
 
   code-analysis:
     name: Code Analysis
@@ -85,7 +93,9 @@ jobs:
     needs:
       - test
       - code-analysis
-    if: github.event_name == 'push'
+    if: |
+      github.event_name == 'push' &&
+      needs.test.result == 'success'
 
     permissions:
       contents: read
