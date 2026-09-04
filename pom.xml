@@ -180,7 +180,7 @@
                 <configuration>
                     <configLocation>google_checks.xml</configLocation>
                     <failOnViolation>true</failOnViolation>
-                    <violationSeverity>warning</violationSeverity>
+                    <violationSeverity>error</violationSeverity>
                 </configuration>
             </plugin>
         </plugins>
