@@ -9,6 +9,7 @@ import org.example.internship_payment_service.mapper.PaymentMapper;
 import org.example.internship_payment_service.service.PaymentService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class PaymentController {
     }
 
     @GetMapping
-    //@PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal")
+    @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal")
     public List<PaymentResponseDTO> searchPayments(@RequestParam(required = false) Long userId,
                                                    @RequestParam(required = false) Long orderId,
                                                    @RequestParam(required = false) PaymentStatus status) {
@@ -40,7 +41,7 @@ public class PaymentController {
     }
 
     @GetMapping("/total/users/{userId}")
-   // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public BigDecimal getTotalForUser(@PathVariable  Long userId,
                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
@@ -48,7 +49,7 @@ public class PaymentController {
     }
 
     @GetMapping("/total/users")
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public BigDecimal getTotalForUsers( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
         return paymentService.getTotalForAllUsers(from, to);
