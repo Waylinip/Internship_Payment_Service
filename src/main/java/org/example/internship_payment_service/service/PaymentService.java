@@ -5,6 +5,8 @@ import org.example.internship_payment_service.dto.PaymentRequestDTO;
 import org.example.internship_payment_service.dto.PaymentResponseDTO;
 import org.example.internship_payment_service.entity.Payment;
 import org.example.internship_payment_service.entity.PaymentStatus;
+import org.example.internship_payment_service.kafka.event.PaymentEvent;
+import org.example.internship_payment_service.kafka.producer.PaymentEventProducer;
 import org.example.internship_payment_service.mapper.PaymentMapper;
 import org.example.internship_payment_service.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
@@ -21,10 +23,13 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
     private final RandomNumberClient randomNumberClient;
 
-    public PaymentService(PaymentRepository paymentRepository, PaymentMapper paymentMapper, RandomNumberClient randomNumberClient) {
+    private final PaymentEventProducer eventProducer;
+
+    public PaymentService(PaymentRepository paymentRepository, PaymentMapper paymentMapper, RandomNumberClient randomNumberClient, PaymentEventProducer eventProducer) {
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
         this.randomNumberClient = randomNumberClient;
+        this.eventProducer = eventProducer;
     }
 
     @Transactional
@@ -44,6 +49,12 @@ public class PaymentService {
 
         Payment savedPayment = paymentRepository.save(payment);
 
+        PaymentEvent event = new PaymentEvent(
+                "CREATE_PAYMENT",
+                savedPayment.getOrderId(),
+                savedPayment.getStatus().name()
+        );
+        eventProducer.sendPaymentCreatedEvent(event);
         return paymentMapper.toResponseDTO(savedPayment);
     }
 
