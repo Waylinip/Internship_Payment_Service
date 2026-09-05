@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,10 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PaymentResponseDTO {
 
-    private Long id;
+    private String id;
     private Long orderId;
     private Long userId;
     private String status;
-    private LocalDateTime timestamp;
+    private Instant timestamp;
     private BigDecimal paymentAmount;
 }

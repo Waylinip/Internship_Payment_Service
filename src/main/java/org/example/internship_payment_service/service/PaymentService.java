@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class PaymentService {
             payment.setStatus(PaymentStatus.FAILED);
         }
 
-        payment.setTimestamp(LocalDateTime.now());
+        payment.setTimestamp(Instant.now());
 
         Payment savedPayment = paymentRepository.save(payment);
 
@@ -67,14 +68,14 @@ public class PaymentService {
         return paymentMapper.toDtoList(payments);
     }
 
-    public BigDecimal getTotalForUser(Long userId, LocalDateTime from, LocalDateTime to) {
+    public BigDecimal getTotalForUser(Long userId, Instant from, Instant to) {
 
         validateDateRange(from, to);
 
         return paymentRepository.sumPaymentsForUserInRange(userId, from, to);
     }
 
-    public BigDecimal getTotalForAllUsers(LocalDateTime from, LocalDateTime to) {
+    public BigDecimal getTotalForAllUsers(Instant from, Instant to) {
 
         validateDateRange(from, to);
 
@@ -90,7 +91,7 @@ public class PaymentService {
         }
     }
 
-    private void validateDateRange(LocalDateTime from, LocalDateTime to) {
+    private void validateDateRange(Instant from, Instant to) {
 
         if (from == null || to == null) {
             throw new IllegalArgumentException(
