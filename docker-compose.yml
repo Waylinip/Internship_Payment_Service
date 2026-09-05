@@ -1,0 +1,55 @@
+services:
+
+  payment-service:
+    container_name: payment-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8080"
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_HOST: mongodb
+      DB_PORT: 27017
+      DB_NAME: payment_service
+      KAFKA_URL: kafka:9092
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - mongodb
+      - kafka
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongo_data:/data/db
+
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: payment-kafka
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:9094,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9094
+
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+volumes:
+  mongo_data:
