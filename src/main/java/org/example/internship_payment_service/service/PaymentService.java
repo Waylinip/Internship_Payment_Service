@@ -31,7 +31,6 @@ public class PaymentService {
     public PaymentResponseDTO createPayment(PaymentRequestDTO request) {
         Payment payment = paymentMapper.toEntity(request);
 
-        payment.setStatus(PaymentStatus.PENDING);
 
         int n = randomNumberClient.getRandomNumber();
         if (n % 2 == 0) {
