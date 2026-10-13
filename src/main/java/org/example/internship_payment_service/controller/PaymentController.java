@@ -43,15 +43,15 @@ public class PaymentController {
     @GetMapping("/total/users/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public BigDecimal getTotalForUser(@PathVariable  Long userId,
-                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
-                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
+                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to) {
         return paymentService.getTotalForUser(userId, from, to);
     }
 
     @GetMapping("/total/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public BigDecimal getTotalForUsers( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
-                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+    public BigDecimal getTotalForUsers( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
+                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to) {
         return paymentService.getTotalForAllUsers(from, to);
 
     }
